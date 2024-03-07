@@ -32,6 +32,8 @@ q~+q;12Ns|	ser	이다
 
 - Syntax:
 ./anki2xls.pyw "$$$THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
+
+Author: jlnkls
 """
 
 
@@ -43,7 +45,7 @@ from openpyxl.styles import Font
 from openpyxl.styles import Alignment
 
 
-def anki2xlsm(path, anki_txt_filename, vocab_list_name):
+def anki2xls(path, anki_txt_filename, vocab_list_name):
     ''' Update the vocabulary spreadsheet with the Anki-output TXT file '''
 
     # Read the TXT file
@@ -147,7 +149,7 @@ def main():
     path = root_dir + lang_name
 
     # Anki TXT to XLS
-    anki2xlsm(path, anki_txt_filename, vocab_list_name)
+    anki2xls(path, anki_txt_filename, vocab_list_name)
 
 
 # Main

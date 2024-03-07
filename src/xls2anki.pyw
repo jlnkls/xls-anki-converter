@@ -17,6 +17,8 @@ Python script that:
 
 - Syntax:
 ./xls2anki.pyw "$$$THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
+
+Author: jlnkls
 """
 
 import pandas as pd
