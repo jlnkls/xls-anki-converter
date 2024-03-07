@@ -16,7 +16,7 @@ Python script that:
 ----> the separator to be used is the tab space
 
 - Syntax:
-./xls2anki.pyw "$$$THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
+./xls2anki.pyw "$$$TWO_OR_THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
 
 Author: jlnkls
 """
