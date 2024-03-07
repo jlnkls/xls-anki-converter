@@ -31,7 +31,7 @@ q~+q;12Ns|	ser	이다
 --> Usees the openpyxl library
 
 - Syntax:
-./anki2xls.pyw "$$$THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
+./anki2xls.pyw "$$$TWO_OR_THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
 
 Author: jlnkls
 """
