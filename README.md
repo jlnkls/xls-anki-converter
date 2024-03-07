@@ -1,7 +1,7 @@
 # xls-anki-converter
 Managing Anki decks via an XLS spreadsheet
 
-![Header](https://github.com/jlnkls/xls-anki-converter/blob/master/doc/doc.pdf)
+![Header](https://github.com/jlnkls/xls-anki-converter/blob/master/doc/xls-anki-converter-diagram.png)
 
 ## Use
-Refer to [doc.pdf](https://github.com/jlnkls/xls-anki-converter/blob/master/doc/xls-anki-converter-diagram.png) for the usage and required file structure
+Refer to [doc.pdf](https://github.com/jlnkls/xls-anki-converter/blob/master/doc/doc.pdf) for the usage and required file structure
