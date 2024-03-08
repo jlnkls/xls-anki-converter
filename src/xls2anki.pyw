@@ -6,9 +6,9 @@ Python script that:
 
 - The contents of the XLS file have to be transformed to TXT, noting that, in the XLS file:
 --> the first row is to be omitted 
---> rows 2 to 5 are the metadata rows, they should be inserted first in the TXT file
---> row 6 is to be omitted 
---> rows 7 until the end of the file have to be included in the TXT in the following order:
+--> rows 2 to 6 are the metadata rows, they should be inserted first in the TXT file
+--> row 7 is to be omitted 
+--> rows 8 until the end of the file have to be included in the TXT in the following order:
 ----> first, the cell at column 1 (Anki GUID)
 ----> followed by the cell at column 3 (source language)
 ----> followed by the cell at column 2 (language being learned)
@@ -16,7 +16,7 @@ Python script that:
 ----> the separator to be used is the tab space
 
 - Syntax:
-./xls2anki.pyw "$$$TWO_OR_THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
+./xlsm2anki.pyw "$$$TWO_OR_THREE_LETTER_IDENTIFIER_OF_LANGUAGE$$$"
 
 Author: jlnkls
 """
@@ -40,7 +40,7 @@ def generate_random_string():
     return ''.join(random.choice(chars) for _ in range(10))
 
 
-def fill_empty_guid_cells(data):
+def fill_empty_guid_cells(data, language_id):
     ''' Fill GUID cells with a new randomly generated GUID if cell is empty'''
 
     # Init used GUIDs
@@ -52,7 +52,7 @@ def fill_empty_guid_cells(data):
         if data.iloc[i, 0] == '' or pd.isnull(data.iloc[i, 0]):
             # Generate random guid string until it is new
             while True:
-                random_string = generate_random_string()
+                random_string = language_id + "-" + generate_random_string()
                 if random_string not in used_guids:
                     data.iloc[i, 0] = random_string
                     used_guids.add(random_string)
@@ -62,23 +62,23 @@ def fill_empty_guid_cells(data):
             used_guids.add(data.iloc[i, 0])
 
 
-def xls2anki(path, vocab_list_name):
+def xls2anki(path, vocab_list_name, language_id):
     ''' Produce an Anki-ready TXT file of a deck spreadsheet '''
 
     # Load the XLS file
     data = pd.read_excel(path + vocab_list_name + ".xlsm", header=None)
 
     # Extract metadata rows
-    metadata = data.iloc[1:5, :]
+    metadata = data.iloc[1:6, :]
 
     # Extract data rows and rearrange columns
-    data = data.iloc[6:, [0, 2, 1, 3]]
+    data = data.iloc[7:, [0, 2, 1, 3]]
 
     # Reset the column index to maintain the rearranged columns
     data.columns = range(data.shape[1])
 
     # Add GUIDs to notes that lack them
-    fill_empty_guid_cells(data)
+    fill_empty_guid_cells(data, language_id)
 
     # Escape hashes in GUIDs
     for i in range(len(data)):
@@ -109,12 +109,15 @@ def main():
         if (sys.argv[1] in "EUS"):
             lang_name = "Euskara/"
             vocab_list_name = "Hiztegia"
+            language_id = "EUS"
         elif (sys.argv[1] in "KR"):
             lang_name = "Hangugeo/"
             vocab_list_name = "eohwi"
+            language_id = "KR"
         else:
             lang_name = "Suomi/"
             vocab_list_name = "Sanasto"
+            language_id = "FI"
 
     lang_name += "Vocabulary/"
 
@@ -122,7 +125,7 @@ def main():
     path = root_dir + lang_name
 
     # Anki TXT to XLS
-    xls2anki(path, vocab_list_name)
+    xls2anki(path, vocab_list_name, language_id)
 
 
 # Main

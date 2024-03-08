@@ -6,9 +6,10 @@ Python script that:
 #separator:tab
 #html:false
 #guid column:1
+#tags column:3
 
 --> the rest of the rows are actual table data separated by tabs, like this:
-q~+q;12Ns|	ser	이다
+KR-VG&&]+fv((   ser 이다
 
 - Takes as a second input an XLS document
 
@@ -18,14 +19,14 @@ q~+q;12Ns|	ser	이다
 
 - Copies the rows of the metadata DataFrame to rows 2 to 5 in the XLS file (that is, it substitutes the original content of the XLSM file from rows 2 to 5)
 
-- Copies the data DataFrame from rows 7 to the end of the XLS (adding more rows in the XLS DataFrame if the TXT file has more rows than the XLS DataFrame) in the following fashion:
---> It copies column 1 of the TXT in column 1 of the XLSM (from rows 7 to the end of the XLSM) (Anki GUID),
---> It copies column 2 of the TXT in column 3 of the XLSM (from rows 7 to the end of the XLSM) (source language)
---> It copies column 3 of the TXT in column 2 of the XLSM (from rows 7 to the end of the XLSM) (language being learned)
---> Removes all the contents from column 4 of the XLSM (from row 7 to the end of the XLSM) (Anki Tags)
----> (that is, it substitutes the original content of the XLS file from rows 7 to the end)
+- Copies the data DataFrame from rows 8 to the end of the XLS (adding more rows in the XLS DataFrame if the TXT file has more rows than the XLS DataFrame) in the following fashion:
+--> It copies column 1 of the TXT in column 1 of the XLSM (from row 8 to the end of the XLSM) (Anki GUID),
+--> It copies column 2 of the TXT in column 3 of the XLSM (from row 8 to the end of the XLSM) (source language)
+--> It copies column 3 of the TXT in column 2 of the XLSM (from row 8 to the end of the XLSM) (language being learned)
+--> Removes all the contents from column 4 of the XLSM (from row 8 to the end of the XLSM) (Anki Tags)
+---> (that is, it substitutes the original content of the XLS file from row 8 to the end)
 
-- Changes the font of every cell from row 7 onwards, for column 4, in the XLS to font size "15"
+- Changes the font of every cell from row 8 onwards, for column 4, in the XLS to font size "15"
 
 - Keeps the original formatting of the XLS file, the colors, the visible print area, the freeze panes option, and the VBA code (if it is .xlsm)
 --> Usees the openpyxl library
@@ -69,17 +70,17 @@ def anki2xls(path, anki_txt_filename, vocab_list_name):
         for c_idx, value in enumerate(row):
             sheet.cell(row=r_idx + 2, column=c_idx + 1, value=value)
 
-    # Clear all content from row 7 onwards in all columns
-    for row in sheet.iter_rows(min_row=7):
+    # Clear all content from row 8 onwards in all columns
+    for row in sheet.iter_rows(min_row=8):
         for cell in row:
             cell.value = None
 
-    # Copy data to rows 7 onwards in the XLS file
+    # Copy data to row 8 and onwards in the XLS file
     for r_idx, row in txt_data.iterrows():
-        sheet.cell(row=r_idx + 7, column=1, value=row[0])  # Copy column 1 of TXT to column 1 of XLS (Anki GUID)
-        sheet.cell(row=r_idx + 7, column=3, value=row[1])  # Copy column 2 of TXT to column 3 of XLS (source language)
-        sheet.cell(row=r_idx + 7, column=2, value=row[2])  # Copy column 3 of TXT to column 2 of XLS (language being learned)
-        sheet.cell(row=r_idx + 7, column=4, value=row[3])  # Copy column 4 of TXT to column 4 of XLS (Anki Tags)
+        sheet.cell(row=r_idx + 8, column=1, value=row[0])  # Copy column 1 of TXT to column 1 of XLS (Anki GUID)
+        sheet.cell(row=r_idx + 8, column=3, value=row[1])  # Copy column 2 of TXT to column 3 of XLS (source language)
+        sheet.cell(row=r_idx + 8, column=2, value=row[2])  # Copy column 3 of TXT to column 2 of XLS (language being learned)
+        sheet.cell(row=r_idx + 8, column=4, value=row[3])  # Copy column 4 of TXT to column 4 of XLS (Anki Tags)
 
 
     # Check and modify cells starting with "=" (escape them as Excel treats them otherwise as formulas)
@@ -95,11 +96,11 @@ def anki2xls(path, anki_txt_filename, vocab_list_name):
     for cell in sheet[1]:
         cell.font = font_style_white
 
-    # Define the font style as bold for row 6
+    # Define the font style as bold for row 7
     font_style_bold = Font(name='Segoe UI', size=15, bold=True)  # Bold
 
-    # Change the font style to bold for row 6
-    for cell in sheet[6]:
+    # Change the font style to bold for row 7
+    for cell in sheet[7]:
         cell.font = font_style_bold
 
     # Define the alignment style for centering text
@@ -108,14 +109,14 @@ def anki2xls(path, anki_txt_filename, vocab_list_name):
     # Define the font style with size 15
     font_style_big = Font(size=15, name="Segoe UI")
 
-    # Center all text and apply size 15 from row 7 onwards
-    for row in sheet.iter_rows(min_row=7):
+    # Center all text and apply size 15 from row 8 onwards
+    for row in sheet.iter_rows(min_row=8):
         for cell in row:
             cell.alignment = alignment_style
             cell.font = font_style_big
 
     # Set the print area in the XLS file
-    sheet.print_area = 'B1:C{}'.format(len(txt_data) + 6)  # Adjust based on the number of rows in the data
+    sheet.print_area = 'B1:C{}'.format(len(txt_data) + 7)  # Adjust based on the number of rows in the data
     
     # Save the modified XLS file
     xl.save(path + vocab_list_name + ".xlsm")
