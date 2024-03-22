@@ -6,13 +6,14 @@ Python script that:
 
 - The contents of the XLS file have to be transformed to TXT, noting that, in the XLS file:
 --> the first row is to be omitted 
---> rows 2 to 6 are the metadata rows, they should be inserted first in the TXT file
---> row 7 is to be omitted 
---> rows 8 until the end of the file have to be included in the TXT in the following order:
+--> rows 2 to 7 are the metadata rows, they should be inserted first in the TXT file
+--> row 8 is to be omitted 
+--> rows 9 until the end of the file have to be included in the TXT in the following order:
 ----> first, the cell at column 1 (Anki GUID)
 ----> followed by the cell at column 3 (source language)
 ----> followed by the cell at column 2 (language being learned)
 ----> followed by the cell at column 4 (Anki Tags)
+----> followed by the cell at column 5 (Anki Notetype)
 ----> the separator to be used is the tab space
 
 - Syntax:
@@ -62,23 +63,31 @@ def fill_empty_guid_cells(data, language_id):
             used_guids.add(data.iloc[i, 0])
 
 
-def xls2anki(path, vocab_list_name, language_id):
+def fill_empty_notetype(data, notetype):
+    ''' Fill Notetype cells with assigned Notetype'''
+    data.loc[data.iloc[:, 4].isnull(), data.columns[4]] = notetype
+
+
+def xls2anki(path, vocab_list_name, language_id, notetype):
     ''' Produce an Anki-ready TXT file of a deck spreadsheet '''
 
     # Load the XLS file
     data = pd.read_excel(path + vocab_list_name + ".xlsm", header=None)
 
     # Extract metadata rows
-    metadata = data.iloc[1:6, :]
+    metadata = data.iloc[1:7, :]
 
     # Extract data rows and rearrange columns
-    data = data.iloc[7:, [0, 2, 1, 3]]
+    data = data.iloc[8:, [0, 2, 1, 3, 4]]
 
     # Reset the column index to maintain the rearranged columns
     data.columns = range(data.shape[1])
 
     # Add GUIDs to notes that lack them
     fill_empty_guid_cells(data, language_id)
+
+    # Add Notetype to notes that lck them
+    fill_empty_notetype(data, notetype)
 
     # Escape hashes in GUIDs
     for i in range(len(data)):
@@ -89,7 +98,7 @@ def xls2anki(path, vocab_list_name, language_id):
     result = pd.concat([metadata, data])
 
     # Check and replace values starting with " =" (un-escape space-equal-sign combinations)
-    result = result.applymap(lambda x: x.lstrip() if isinstance(x, str) and x.startswith(" =") else x)
+    result = result.apply(lambda x: x.lstrip() if isinstance(x, str) and x.startswith(" =") else x)
 
     # Save the result to a TXT file with tab-separated values
     result.to_csv(path + vocab_list_name + ".txt", sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
@@ -110,14 +119,17 @@ def main():
             lang_name = "Euskara/"
             vocab_list_name = "Hiztegia"
             language_id = "EUS"
+            notetype = "Basic"
         elif (sys.argv[1] in "KR"):
             lang_name = "Hangugeo/"
             vocab_list_name = "eohwi"
             language_id = "KR"
+            notetype = "Basic (type in the answer)"
         else:
             lang_name = "Suomi/"
             vocab_list_name = "Sanasto"
             language_id = "FI"
+            notetype = "Basic"
 
     lang_name += "Vocabulary/"
 
@@ -125,7 +137,7 @@ def main():
     path = root_dir + lang_name
 
     # Anki TXT to XLS
-    xls2anki(path, vocab_list_name, language_id)
+    xls2anki(path, vocab_list_name, language_id, notetype)
 
 
 # Main
